@@ -8,7 +8,7 @@
 # Purpose: Code for Chapter 4.1 Frequency Analysis                             #
 # Data Used: AEO_Corpus 19C_corpus                                             #
 # Packages Used:  tm, koRpus, ggplot2                                          #
-# Last Updated: 27 October 2017                                                 #
+# Last Updated: 31 October 2017                                                 #
 ################################################################################
 
 # Code for Chapter 4 Term-Document Matrices, Section 1 Frequency Analysis
@@ -34,28 +34,149 @@ library(tm)
 library(cluster)
 library(factoextra)
 
-# Frequency Lists
-ss <- scan(file = "ja_corpus/JA_1811_SS.txt", what = "char", sep = "\n", 
-           quote = "", comment.char = "")
-head(ss)
+# Frequency Lists - individual texts
 
-ss <- tolower(ss)
-word_list <- strsplit(ss, "\\W")
-type <- unlist(word_list)
-not_blank <- which(type != "")
-type <- type[not_blank]
-freq_list <- table(type)
-sorted_list <- sort(freq_list, decreasing = T)
+# Create a path to the files
+# JA
+input.dir <- "ja_corpus" 
+# Read the name of all .txt files
+files <- dir(input.dir, "\\.txt") 
+text <- c("JA_SS", "JA_PP", "JA_MP", "JA_E", "JA_NA", "JA_P")
 
-head(sorted_list)
+# SO
+input.dir <- "so_corpus" 
+# Read the name of all .txt files
+files <- dir(input.dir, "\\.txt") 
+text <- c("SO_SC", "SO_NS", "SO_WG", "SO_M", "SO_OD", "SO_FM")
 
-write.csv(sorted_list, "ss_freq_sorted.csv")
+# ME
+input.dir <- "me_corpus" 
+# Read the name of all .txt files
+files <- dir(input.dir, "\\.txt") 
+text <- c("ME_CR", "ME_B", "ME_MG", "ME_E", "ME_L", "ME_A", "ME_D", "ME_M",
+          "ME_MF", "ME_A_1811", "ME_C", "ME_V", "ME_P", "ME_H", "ME_O")
 
-length(type)
+for(i in 1:length(files)) {
+        x <- scan(file = paste0(input.dir, "/", files[i]), what = "char", sep = "\n", 
+                  quote = "", comment.char = "")
+                  word_list <- strsplit(x, "\\W")
+                  type <- unlist(word_list)
+                  not_blank <- which(type != "")
+                  type <- type[not_blank]
+                  freq_list <- table(type)
+                  sorted_list <- sort(freq_list, decreasing = T)
+                  title <- text[i]
+                  y <- paste0("4_1_results/", title, "_raw_freq", ".csv")
+                  y2 <- paste0("4_1_results/", title, "_rel_freq", ".csv")
+                  write.csv(sorted_list, y)
+                  
+                  rel_freq <- round(100 * (sorted_list / sum(sorted_list)), 2)
+                  write.csv(rel_freq, y2)
+}
 
-rel_freq <- round(100 * (sorted_list / sum(sorted_list)), 2)
+# csv files for raw frequencies and relative frequencies created
 
-write.csv(rel_freq, "ss_rel_freq.csv")
+# Frequencies for each author corpus
+
+# JA
+# Provide a path to the corpus files
+dname <- file.path("ja_corpus") 
+ja <- dir(dname) 
+
+# Create Volatile Corpus
+docs <- VCorpus(DirSource(dname))
+
+# Preprocess corpus
+
+docs <- tm_map(docs, removePunctuation)   # Remove punctuation   
+docs <- tm_map(docs, removeNumbers)      # Remove numbers    
+docs <- tm_map(docs, tolower)   # Convert to lowercase   
+docs <- tm_map(docs, stripWhitespace)   # Strip whitespace  
+docs <- tm_map(docs, PlainTextDocument)
+
+# Create a Document Term Matrix 
+dtm <- DocumentTermMatrix(docs)
+text <- c("JA_SS", "JA_PP", "JA_MP", "JA_E", "JA_NA", "JA_P")
+rownames(dtm) <- text # Allocates text names to rows
+
+# Convert DTM to matrix
+m <- as.matrix(dtm)
+doc_tokens <- rowSums(m)
+tokens <- sum(rowSums(m))
+
+ja_corpus_raw_freq <- colSums(m)
+
+ja_corpus_rel_freq <- round(100 * (ja_corpus_raw_freq / tokens), 2)
+
+write.csv(ja_corpus_raw_freq, "4_1_results/ja_corpus_raw_freq.csv")
+write.csv(ja_corpus_rel_freq, "4_1_results/ja_corpus_rel_freq.csv")
+
+# SO
+# Provide a path to the corpus files
+dname <- file.path("so_corpus") 
+so <- dir(dname) 
+
+# Create Volatile Corpus
+docs <- VCorpus(DirSource(dname))
+
+# Preprocess corpus
+
+docs <- tm_map(docs, removePunctuation)   # Remove punctuation   
+docs <- tm_map(docs, removeNumbers)      # Remove numbers    
+docs <- tm_map(docs, tolower)   # Convert to lowercase   
+docs <- tm_map(docs, stripWhitespace)   # Strip whitespace  
+docs <- tm_map(docs, PlainTextDocument)
+
+# Create a Document Term Matrix 
+dtm <- DocumentTermMatrix(docs)
+text <- c("SO_SC", "SO_NS", "SO_WG", "SO_M", "SO_OD", "SO_FM")
+rownames(dtm) <- text # Allocates text names to rows
+
+# Convert DTM to matrix
+m <- as.matrix(dtm)
+doc_tokens <- rowSums(m)
+tokens <- sum(rowSums(m))
+
+so_corpus_raw_freq <- colSums(m)
+
+so_corpus_rel_freq <- round(100 * (so_corpus_raw_freq / tokens), 2)
+
+write.csv(so_corpus_raw_freq, "4_1_results/so_corpus_raw_freq.csv")
+write.csv(so_corpus_rel_freq, "4_1_results/so_corpus_rel_freq.csv")
+
+# ME
+# Provide a path to the corpus files
+dname <- file.path("me_corpus") 
+me <- dir(dname) 
+
+# Create Volatile Corpus
+docs <- VCorpus(DirSource(dname))
+
+# Preprocess corpus
+
+docs <- tm_map(docs, removePunctuation)   # Remove punctuation   
+docs <- tm_map(docs, removeNumbers)      # Remove numbers    
+docs <- tm_map(docs, tolower)   # Convert to lowercase   
+docs <- tm_map(docs, stripWhitespace)   # Strip whitespace  
+docs <- tm_map(docs, PlainTextDocument)
+
+# Create a Document Term Matrix 
+dtm <- DocumentTermMatrix(docs)
+text <- c("ME_CR", "ME_B", "ME_MG", "ME_E", "ME_L", "ME_A", "ME_D", "ME_M",
+          "ME_MF", "ME_A_1811", "ME_C", "ME_V", "ME_P", "ME_H", "ME_O")
+rownames(dtm) <- text # Allocates text names to rows
+
+# Convert DTM to matrix
+m <- as.matrix(dtm)
+doc_tokens <- rowSums(m)
+tokens <- sum(rowSums(m))
+
+me_corpus_raw_freq <- colSums(m)
+
+me_corpus_rel_freq <- round(100 * (me_corpus_raw_freq / tokens), 2)
+
+write.csv(me_corpus_raw_freq, "4_1_results/me_corpus_raw_freq.csv")
+write.csv(me_corpus_rel_freq, "4_1_results/me_corpus_rel_freq.csv")
 
 # Measures of Lexical Variety
 
@@ -67,10 +188,7 @@ write.csv(rel_freq, "ss_rel_freq.csv")
 
 
 
-# Load packages
-library(tm)
-library(cluster)
-library(factoextra)
+# Whole corpus
 
 # Provide a path to the corpus files
 dname <- file.path("AEO_Corpus") 
