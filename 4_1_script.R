@@ -6,9 +6,9 @@
 # Institution: Maynooth University                                             #
 # Project: PhD Thesis                                                          #
 # Purpose: Code for Chapter 4.1 Frequency Analysis                             #
-# Data Used: AEO_Corpus 19C_corpus                                             #
+# Data Used: ja_corpus, me_corpus, so_corpus, AEO_Corpus 19C_corpus                                             #
 # Packages Used:  tm, koRpus, ggplot2                                          #
-# Last Updated: 31 October 2017                                                 #
+# Last Updated: 1 November 2017                                                 #
 ################################################################################
 
 # Code for Chapter 4 Term-Document Matrices, Section 1 Frequency Analysis
@@ -178,16 +178,35 @@ me_corpus_rel_freq <- round(100 * (me_corpus_raw_freq / tokens), 2)
 write.csv(me_corpus_raw_freq, "4_1_results/me_corpus_raw_freq.csv")
 write.csv(me_corpus_rel_freq, "4_1_results/me_corpus_rel_freq.csv")
 
+me_rel <- read.csv("4_1_results/me_corpus_rel_freq.csv", header = T)
+so_rel <- read.csv("4_1_results/so_corpus_rel_freq.csv", header = T)
+ja_rel <- read.csv("4_1_results/ja_corpus_rel_freq.csv", header = T)
+
+colnames(me_rel) <- c("word", "freq")
+colnames(so_rel) <- c("word", "freq")
+colnames(ja_rel) <- c("word", "freq")
+
+# Sort data frames by rel_freq
+
+me_rel_sort <- me_rel[order(me_rel$freq, decreasing = T),  ]
+so_rel_sort <- so_rel[order(so_rel$freq, decreasing = T),  ]
+ja_rel_sort <- ja_rel[order(ja_rel$freq, decreasing = T),  ]
+
+################################################################################ 
+
+
 # Measures of Lexical Variety
 
+################################################################################ 
 # Lexical Co-occurrence: Collocations
 
+################################################################################ 
 # (Lexico-)Grammatical Co-occurrence: Concordances
 
 
 
 
-
+################################################################################ 
 # Whole corpus
 
 # Provide a path to the corpus files
@@ -255,6 +274,9 @@ fviz_nbclust(m_scale, kmeans,
              method = "gap_stat")
 
 
+################################################################################ 
+
+# Stylometric Analysis
 
 
 
