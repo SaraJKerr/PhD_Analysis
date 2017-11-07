@@ -6,7 +6,7 @@
 # Institution: Maynooth University                                             #
 # Project: PhD Thesis                                                          #
 # Purpose: Cleaning Owenson files                                              #
-# Last Updated: 2 November 2017                                                #
+# Last Updated: 7 November 2017                                                #
 ################################################################################
 
 # As all but two of Owenson's novels had to be sourced from Archive.org and 
@@ -26,12 +26,14 @@ setwd("~/PhD_Main/PhD_Analysis/4_1/so_corpus")
 
 x <- scan(file = files[6], what = "char", 
                   sep = "\n", quote = "", comment.char = "")
-x <- gsub(" *\\b[^aiAI]{1}\\b *", " ", x) # Remove random letters
-x <- gsub("\\d", "", x) # Remove numbers
-write(x, paste0("clean/", files[6]))
+# To remove random letters
+x <- gsub(" *\\b[^aiAI]{1}\\b *", "", x)
+
+# To remove numbers
+x <- gsub("\\d", "", x)
 
 # To remove headers
-x <- scan(file = files[2], what = "char", 
-          sep = "\n", quote = "", comment.char = "")
 x <- gsub("DOMINICK", "", x) # Specific capitalised words
+
+# Write cleaned file back to folder
 write(x, paste0("clean/", files[2]))
