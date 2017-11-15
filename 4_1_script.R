@@ -6,9 +6,9 @@
 # Institution: Maynooth University                                             #
 # Project: PhD Thesis                                                          #
 # Purpose: Code for Chapter 4.1 Frequency Analysis                             #
-# Data Used: ja_corpus, me_corpus, so_corpus, AEO_Corpus 19c_corpus            #
+# Data Used: ja_corpus, me_corpus, so_corpus, AEO_Corpus, 19c_corpus           #
 # Packages Used:  tm, koRpus, ggplot2                                          #
-# Last Updated: 2 November 2017                                                #
+# Last Updated: 15 November 2017                                               #
 ################################################################################
 
 # Code for Chapter 4 Term-Document Matrices, Section 1 Frequency Analysis
@@ -24,6 +24,11 @@
 #           http://www.sthda.com/english/articles/25-cluster-analysis-in-r-
 #           practical-guide/106-cluster-analysis-in-r-simplified-and-enhanced/
 #           Quantitative Corpus Linguistics with R - Stefan Th. Gries (2009)
+#           Text Analysis with R for Students of Literature - M Jockers (2014)
+
+##########
+# SET UP #
+##########
 
 # Set working directory
 setwd("~/PhD_Main/PhD_Analysis/4_1")
@@ -34,40 +39,43 @@ library(tm)
 library(cluster)
 library(factoextra)
 
-# Frequency Lists - individual texts
+######################################
+# Frequency Lists - individual texts #
+######################################
 
 # Create a path to the files
 # JA
-input.dir <- "ja_corpus" 
+input.dir1 <- "ja_corpus" 
 # Read the name of all .txt files
-files <- dir(input.dir, "\\.txt") 
+files1 <- dir(input.dir1, "\\.txt") 
 text <- c("JA_SS", "JA_PP", "JA_MP", "JA_E", "JA_NA", "JA_P")
 
 # SO
-input.dir <- "so_corpus" 
+input.dir2 <- "so_corpus" 
 # Read the name of all .txt files
-files <- dir(input.dir, "\\.txt") 
-text <- c("SO_SC", "SO_NS", "SO_WG", "SO_M", "SO_OD", "SO_FM")
+files2 <- dir(input.dir2, "\\.txt") 
+text2 <- c("SO_SC", "SO_NS", "SO_WG", "SO_M", "SO_OD", "SO_FM")
 
 # ME
-input.dir <- "me_corpus" 
+input.dir3 <- "me_corpus" 
 # Read the name of all .txt files
-files <- dir(input.dir, "\\.txt") 
-text <- c("ME_CR", "ME_B", "ME_MG", "ME_E", "ME_L", "ME_A", "ME_D", "ME_M",
+files3 <- dir(input.dir3, "\\.txt") 
+text3 <- c("ME_CR", "ME_B", "ME_PT", "ME_MG", "ME_E", "ME_L", "ME_A", "ME_D", "ME_M",
           "ME_MF", "ME_A_1811", "ME_C", "ME_V", "ME_P", "ME_H", "ME_O")
 
 # m_corpus
-input.dir <- "m_corpus"
-files <- dir(input.dir, "\\.txt")
-text <- seq(1, 13)
+input.dir4 <- "m_corpus"
+files4 <- dir(input.dir4, "\\.txt")
+text4 <- files4
 
 # f_corpus
-input.dir2 <- "f_corpus"
-files2 <- dir(input.dir2, "\\.txt")
-text2 <- seq(1, 28)
+input.dir5 <- "f_corpus"
+files5 <- dir(input.dir5, "\\.txt")
+text5 <- files5
 
-for(i in 1:length(files2)) {
-        x <- scan(file = paste0(input.dir2, "/", files2[i]), what = "char", sep = "\n", 
+# Amend for each corpus
+for(i in 1:length(files1)) {
+        x <- scan(file = paste0(input.dir1, "/", files1[i]), what = "char", sep = "\n", 
                   quote = "", comment.char = "")
                   word_list <- strsplit(x, "\\W")
                   type <- unlist(word_list)
@@ -75,20 +83,20 @@ for(i in 1:length(files2)) {
                   type <- type[not_blank]
                   freq_list <- table(type)
                   sorted_list <- sort(freq_list, decreasing = T)
-                  title <- files2[i]
+                  title <- files4[i]
                   y <- paste0("4_1_results/", title, "_raw_freq", ".csv")
                   y2 <- paste0("4_1_results/", title, "_rel_freq", ".csv")
                   write.csv(sorted_list, y)
                   
-                  rel_freq <- round(100 * (sorted_list / sum(sorted_list)), 2)
-                  write.csv(rel_freq, y2)
+                 rel_freq <- round(100 * (sorted_list / sum(sorted_list)), 2)
+                write.csv(rel_freq, y2)
 }
 
 # csv files for raw frequencies and relative frequencies created
 
-
-
-# Frequencies for each author corpus
+######################################
+# Frequencies for each author corpus #
+######################################
 
 # JA
 # Provide a path to the corpus files
@@ -107,18 +115,18 @@ docs <- tm_map(docs, stripWhitespace)   # Strip whitespace
 docs <- tm_map(docs, PlainTextDocument)
 
 # Create a Document Term Matrix 
-dtm <- DocumentTermMatrix(docs)
-text <- c("JA_SS", "JA_PP", "JA_MP", "JA_E", "JA_NA", "JA_P")
-rownames(dtm) <- text # Allocates text names to rows
+dtm_ja <- DocumentTermMatrix(docs)
+text_ja <- c("JA_SS", "JA_PP", "JA_MP", "JA_E", "JA_NA", "JA_P")
+rownames(dtm_ja) <- text_ja # Allocates text names to rows
 
 # Convert DTM to matrix
-m <- as.matrix(dtm)
-doc_tokens <- rowSums(m)
-tokens <- sum(rowSums(m))
+m_ja <- as.matrix(dtm_ja)
+doc_tokens_ja <- rowSums(m_ja)
+tokens_ja <- sum(rowSums(m_ja))
 
-ja_corpus_raw_freq <- colSums(m)
+ja_corpus_raw_freq <- colSums(m_ja)
 
-ja_corpus_rel_freq <- round(100 * (ja_corpus_raw_freq / tokens), 2)
+ja_corpus_rel_freq <- round(100 * (ja_corpus_raw_freq / tokens_ja), 2)
 
 write.csv(ja_corpus_raw_freq, "4_1_results/ja_corpus_raw_freq.csv")
 write.csv(ja_corpus_rel_freq, "4_1_results/ja_corpus_rel_freq.csv")
@@ -140,18 +148,18 @@ docs <- tm_map(docs, stripWhitespace)   # Strip whitespace
 docs <- tm_map(docs, PlainTextDocument)
 
 # Create a Document Term Matrix 
-dtm <- DocumentTermMatrix(docs)
-text <- c("SO_SC", "SO_NS", "SO_WG", "SO_M", "SO_OD", "SO_FM")
-rownames(dtm) <- text # Allocates text names to rows
+dtm_so <- DocumentTermMatrix(docs)
+text_so <- c("SO_SC", "SO_NS", "SO_WG", "SO_M", "SO_OD", "SO_FM")
+rownames(dtm_so) <- text_so # Allocates text names to rows
 
 # Convert DTM to matrix
-m <- as.matrix(dtm)
-doc_tokens <- rowSums(m)
-tokens <- sum(rowSums(m))
+m_so <- as.matrix(dtm_so)
+doc_tokens_so <- rowSums(m_so)
+tokens_so <- sum(rowSums(m_so))
 
-so_corpus_raw_freq <- colSums(m)
+so_corpus_raw_freq <- colSums(m_so)
 
-so_corpus_rel_freq <- round(100 * (so_corpus_raw_freq / tokens), 2)
+so_corpus_rel_freq <- round(100 * (so_corpus_raw_freq / tokens_so), 2)
 
 write.csv(so_corpus_raw_freq, "4_1_results/so_corpus_raw_freq.csv")
 write.csv(so_corpus_rel_freq, "4_1_results/so_corpus_rel_freq.csv")
@@ -173,19 +181,19 @@ docs <- tm_map(docs, stripWhitespace)   # Strip whitespace
 docs <- tm_map(docs, PlainTextDocument)
 
 # Create a Document Term Matrix 
-dtm <- DocumentTermMatrix(docs)
-text <- c("ME_CR", "ME_B", "ME_MG", "ME_E", "ME_L", "ME_A", "ME_D", "ME_M",
-          "ME_MF", "ME_A_1811", "ME_C", "ME_V", "ME_P", "ME_H", "ME_O")
-rownames(dtm) <- text # Allocates text names to rows
+dtm_me <- DocumentTermMatrix(docs)
+text_me <- c("ME_CR", "ME_B", "ME_PT", "ME_MG", "ME_E", "ME_L", "ME_A", "ME_D", "ME_M",
+             "ME_MF", "ME_A_1811", "ME_C", "ME_V", "ME_P", "ME_H", "ME_O")
+rownames(dtm_me) <- text_me # Allocates text names to rows
 
 # Convert DTM to matrix
-m <- as.matrix(dtm)
-doc_tokens <- rowSums(m)
-tokens <- sum(rowSums(m))
+m_me <- as.matrix(dtm_me)
+doc_tokens_me <- rowSums(m_me)
+tokens_me <- sum(rowSums(m_me))
 
-me_corpus_raw_freq <- colSums(m)
+me_corpus_raw_freq <- colSums(m_me)
 
-me_corpus_rel_freq <- round(100 * (me_corpus_raw_freq / tokens), 2)
+me_corpus_rel_freq <- round(100 * (me_corpus_raw_freq / tokens_me), 2)
 
 write.csv(me_corpus_raw_freq, "4_1_results/me_corpus_raw_freq.csv")
 write.csv(me_corpus_rel_freq, "4_1_results/me_corpus_rel_freq.csv")
@@ -208,18 +216,18 @@ docs <- tm_map(docs, stripWhitespace)   # Strip whitespace
 docs <- tm_map(docs, PlainTextDocument)
 
 # Create a Document Term Matrix 
-dtm <- DocumentTermMatrix(docs)
-text <- f_corp
-rownames(dtm) <- text # Allocates text names to rows
+dtm_f <- DocumentTermMatrix(docs)
+text_f <- f_corp
+rownames(dtm_f) <- text_f # Allocates text names to rows
 
 # Convert DTM to matrix
-m <- as.matrix(dtm)
-doc_tokens <- rowSums(m)
-tokens <- sum(rowSums(m))
+m_f <- as.matrix(dtm_f)
+doc_tokens_f <- rowSums(m_f)
+tokens_f <- sum(rowSums(m_f))
 
-f_corpus_raw_freq <- colSums(m)
+f_corpus_raw_freq <- colSums(m_f)
 
-f_corpus_rel_freq <- round(100 * (f_corpus_raw_freq / tokens), 2)
+f_corpus_rel_freq <- round(100 * (f_corpus_raw_freq / tokens_f), 2)
 
 write.csv(f_corpus_raw_freq, "4_1_results/f_corpus_raw_freq.csv")
 write.csv(f_corpus_rel_freq, "4_1_results/f_corpus_rel_freq.csv")
@@ -241,43 +249,174 @@ docs <- tm_map(docs, stripWhitespace)   # Strip whitespace
 docs <- tm_map(docs, PlainTextDocument)
 
 # Create a Document Term Matrix 
-dtm <- DocumentTermMatrix(docs)
-text <- m_corp
-rownames(dtm) <- text # Allocates text names to rows
+dtm_m <- DocumentTermMatrix(docs)
+text_m <- m_corp
+rownames(dtm_m) <- text_m # Allocates text names to rows
 
 # Convert DTM to matrix
-m <- as.matrix(dtm)
-doc_tokens <- rowSums(m)
-tokens <- sum(rowSums(m))
+m_m <- as.matrix(dtm_m)
+doc_tokens_m <- rowSums(m_m)
+tokens_m <- sum(rowSums(m_m))
 
-m_corpus_raw_freq <- colSums(m)
+m_corpus_raw_freq <- colSums(m_m)
 
-m_corpus_rel_freq <- round(100 * (m_corpus_raw_freq / tokens), 2)
+m_corpus_rel_freq <- round(100 * (m_corpus_raw_freq / tokens_m), 2)
 
 write.csv(m_corpus_raw_freq, "4_1_results/m_corpus_raw_freq.csv")
 write.csv(m_corpus_rel_freq, "4_1_results/m_corpus_rel_freq.csv")
 
+# aeo_corp
+# Provide a path to the corpus files
+dname <- file.path("AEO_corpus") 
+aeo_corp <- dir(dname) 
+
+# Create Volatile Corpus
+docs <- VCorpus(DirSource(dname))
+
+# Preprocess corpus
+
+docs <- tm_map(docs, removePunctuation)   # Remove punctuation   
+docs <- tm_map(docs, removeNumbers)      # Remove numbers    
+docs <- tm_map(docs, tolower)   # Convert to lowercase   
+docs <- tm_map(docs, stripWhitespace)   # Strip whitespace  
+docs <- tm_map(docs, PlainTextDocument)
+
+# Create a Document Term Matrix 
+dtm_aeo <- DocumentTermMatrix(docs)
+text_aeo <- aeo_corp
+rownames(dtm_aeo) <- text_aeo # Allocates text names to rows
+
+# Convert DTM to matrix
+m_aeo <- as.matrix(dtm_aeo)
+doc_tokens_aeo <- rowSums(m_aeo)
+tokens_aeo <- sum(rowSums(m_aeo))
+
+aeo_corpus_raw_freq <- colSums(m_aeo)
+
+aeo_corpus_rel_freq <- round(100 * (aeo_corpus_raw_freq / tokens_aeo), 2)
+
+write.csv(aeo_corpus_raw_freq, "4_1_results/aeo_corpus_raw_freq.csv")
+write.csv(aeo_corpus_rel_freq, "4_1_results/aeo_corpus_rel_freq.csv")
+
+# all_corpus
+# Provide a path to the corpus files
+dname <- file.path("all_corpus") 
+all_corp <- dir(dname) 
+
+# Create Volatile Corpus
+docs <- VCorpus(DirSource(dname))
+
+# Preprocess corpus
+
+docs <- tm_map(docs, removePunctuation)   # Remove punctuation   
+docs <- tm_map(docs, removeNumbers)      # Remove numbers    
+docs <- tm_map(docs, tolower)   # Convert to lowercase   
+docs <- tm_map(docs, stripWhitespace)   # Strip whitespace  
+docs <- tm_map(docs, PlainTextDocument)
+
+# Create a Document Term Matrix 
+dtm_all <- DocumentTermMatrix(docs)
+text_all <- all_corp
+rownames(dtm_all) <- text_all # Allocates text names to rows
+
+# Convert DTM to matrix
+m_all <- as.matrix(dtm_all)
+doc_tokens_all <- rowSums(m_all)
+tokens_all <- sum(rowSums(m_all))
+
+all_corpus_raw_freq <- colSums(m_all)
+
+all_corpus_rel_freq <- round(100 * (all_corpus_raw_freq / tokens_all), 2)
+
+write.csv(all_corpus_raw_freq, "4_1_results/all_corpus_raw_freq.csv")
+write.csv(all_corpus_rel_freq, "4_1_results/all_corpus_rel_freq.csv")
+
+
+
+###########################
+# EXAMINE TEXT SIMILARITY #
+###########################
+# AEO
+# Compute Euclidean distance between document vectors
+d_aeo <- dist(m_aeo)
+
+# Run hierarchical clustering using Ward’s method
+groups <- hclust(d_aeo, method = "ward.D")
+
+# Plot dendogram, use hang to ensure that labels fall below tree
+plot(groups, hang = -1, main = "Cluster Dendrogram of Austen Edgeworth
+     Owenson Corpus",  sub = "Calculated using Ward's method", 
+     xlab = "Texts")
+
+# library(ape)
+# 
+# plot(as.phylo(groups), type = "fan")
+# 
+# colors <- c("red", "blue", "green", "black")
+# clus4 <- cutree(groups, 4)
+# plot(as.phylo(groups), type = "fan", tip.color = colors[clus4],
+#      label.offset = 1, cex = 0.7)
+
+library(ggdendro)
+library(dendextend)
+
+ggdendrogram(groups, rotate = T, theme_dendro = F) +
+        geom_hline(aes(yintercept = 20000, colour="red")) +
+        theme(legend.position = "none") +
+        labs(title ="AEO Corpus Dendrogram of Text Grouping Based on Document Term Matrix",
+             subtitle = "Calculated using Ward's method", y="Height", x="Text")
+
+# dend <- groups %>% as.dendrogram %>%
+#         set("branches_k_color", k=3) %>% set("branches_lwd", 1.2) %>%
+#         set("labels_cex", 0.7) 
+#         
+# # plot the dend in usual "base" plotting engine:
+# plot(dend )
+# 
+# ggd1 <- as.ggdend(dend)
+# 
+# ggplot(ggd1, horiz = T) +
+#         geom_hline(aes(yintercept = 20000, colour="red")) +
+#         theme(legend.position = "none") +
+#         labs(title ="Dendrogram of Text Grouping - AEO Corpus",
+#              subtitle = "Calculated using Ward's method", y="Height", x="Text")
+
+
+
+# Extracted Terms
+# Compute Euclidean distance between document vectors
+dx <- dist(x)
+
+# Run hierarchical clustering using Ward’s method
+groupsx <- hclust(dx, method = "ward.D")
+
+# Plot dendogram, use hang to ensure that labels fall below tree
+plot(groupsx, hang = -1, main = "Cluster Dendrogram of Austen, Edgeworth and
+     Owenson Extracted Terms",  sub = "Calculated using Ward's method")
+
+
+
 ################################################################################
 
-me_rel <- read.csv("4_1_results/me_corpus_rel_freq.csv", header = T)
-so_rel <- read.csv("4_1_results/so_corpus_rel_freq.csv", header = T)
-ja_rel <- read.csv("4_1_results/ja_corpus_rel_freq.csv", header = T)
-m_rel <- read.csv("4_1_results/m_corpus_rel_freq.csv", header = T)
-f_rel <- read.csv("4_1_results/f_corpus_rel_freq.csv", header = T)
-
-colnames(me_rel) <- c("word", "freq")
-colnames(so_rel) <- c("word", "freq")
-colnames(ja_rel) <- c("word", "freq")
-colnames(f_rel) <- c("word", "freq")
-colnames(m_rel) <- c("word", "freq")
-
-# Sort data frames by rel_freq
-
-me_rel_sort <- me_rel[order(me_rel$freq, decreasing = T),  ]
-so_rel_sort <- so_rel[order(so_rel$freq, decreasing = T),  ]
-ja_rel_sort <- ja_rel[order(ja_rel$freq, decreasing = T),  ]
-f_rel_sort <- f_rel[order(f_rel$freq, decreasing = T),  ]
-m_rel_sort <- m_rel[order(m_rel$freq, decreasing = T),  ]
+# me_rel <- read.csv("4_1_results/me_corpus_rel_freq.csv", header = T)
+# so_rel <- read.csv("4_1_results/so_corpus_rel_freq.csv", header = T)
+# ja_rel <- read.csv("4_1_results/ja_corpus_rel_freq.csv", header = T)
+# m_rel <- read.csv("4_1_results/m_corpus_rel_freq.csv", header = T)
+# f_rel <- read.csv("4_1_results/f_corpus_rel_freq.csv", header = T)
+# 
+# colnames(me_rel) <- c("word", "freq")
+# colnames(so_rel) <- c("word", "freq")
+# colnames(ja_rel) <- c("word", "freq")
+# colnames(f_rel) <- c("word", "freq")
+# colnames(m_rel) <- c("word", "freq")
+# 
+# # Sort data frames by rel_freq
+# 
+# me_rel_sort <- me_rel[order(me_rel$freq, decreasing = T),  ]
+# so_rel_sort <- so_rel[order(so_rel$freq, decreasing = T),  ]
+# ja_rel_sort <- ja_rel[order(ja_rel$freq, decreasing = T),  ]
+# f_rel_sort <- f_rel[order(f_rel$freq, decreasing = T),  ]
+# m_rel_sort <- m_rel[order(m_rel$freq, decreasing = T),  ]
 
 ################################################################################
 
