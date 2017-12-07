@@ -32,32 +32,32 @@ independence_500 <- closest_to(clmet, "independence", n = 500)
 ind_500_names <- independence_500$word
 
 head(independence_500)
-ind <- independence_500[1:100, ]
+# ind <- independence_500[1:100, ]
 
 # Extract words
-ind_names <- ind$word
+ind_names <- independence_500$word
 
 
 # Create lists for key areas of independence using vector addition
-ind_wealth <- closest_to(clmet, ~ "independence" + "wealth", n = 100)
+ind_wealth <- closest_to(clmet, ~ "independence" + "wealth", n = 500)
 
 wealth <- ind_wealth$word
 
 head(ind_wealth)
 
-ind_self <- closest_to(clmet, ~ "independence" + "self", n = 100)
+ind_self <- closest_to(clmet, ~ "independence" + "self", n = 500)
 
 self <- ind_self$word
 
 head(ind_self)
 
-ind_marriage <- closest_to(clmet, ~ "independence" + "marriage", n = 100)
+ind_marriage <- closest_to(clmet, ~ "independence" + "marriage", n = 500)
 
 marriage <- ind_marriage$word
 
 head(ind_marriage)
 
-ind_nation <- closest_to(clmet, ~ "independence" + "nation", n = 100)
+ind_nation <- closest_to(clmet, ~ "independence" + "nation", n = 500)
 
 nation <- ind_nation$word
 
@@ -114,8 +114,8 @@ length(nation_terms)
 length(self_terms)
 length(wealth_terms)
 
-# Create lexicon with top 50 filtered terms for each category
-lexicon <- cbind(ind_terms[1:50], wealth_terms[1:50], marriage_terms[1:50],
-                      self_terms[1:50], nation_terms[1:50])
+# Create lexicon with top 250 filtered terms for each category
+lexicon <- cbind(ind_terms[1:250], wealth_terms[1:250], marriage_terms[1:250],
+                      self_terms[1:250], nation_terms[1:250])
 
 write.csv(lexicon, "~/PhD_Main/PhD_Analysis/Data/lexicon.csv")
