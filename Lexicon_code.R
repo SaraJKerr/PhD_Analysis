@@ -119,3 +119,28 @@ lexicon <- cbind(ind_terms[1:250], wealth_terms[1:250], marriage_terms[1:250],
                       self_terms[1:250], nation_terms[1:250])
 
 write.csv(lexicon, "~/PhD_Main/PhD_Analysis/Data/lexicon.csv")
+
+
+# Calculating unique terms for wealth, marriage, self and nation
+
+lexicon <- read.csv("~/PhD_Main/PhD_Analysis/Data/lexicon.csv")
+
+lexicon <- lexicon[,-1]
+
+ind <- as.character(lexicon[,1])
+wealth <- as.character(lexicon[,2])
+marriage <- as.character(lexicon[,3])
+self <- as.character(lexicon[,4])
+nation <- as.character(lexicon[,5])
+
+words <- c(wealth, marriage, self)
+
+wealth_terms <- wealth[which(wealth %in% words != T)]
+marriage_terms <- marriage[which(marriage %in% words != T)]
+self_terms <- self[which(self %in% words != T)]
+nation_terms <- nation[which(nation %in% words != T)]
+
+lexicon_unique <- cbind(wealth_terms[1:100], marriage_terms[1:100],
+                        self_terms[1:100], nation_terms[1:100])
+
+write.csv(lexicon_unique, "~/PhD_Main/PhD_Analysis/Data/lexicon_unique.csv")
