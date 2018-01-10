@@ -125,76 +125,47 @@ ggplot(tidy_corp_cl, aes(x = Theme, y = rel_freq, color = Author)) +
 
 
 ################################################################################
-th <- c("Marriage", "Nation", "Self", "Wealth") 
 
 # calculating mean rel-freq per text per theme
-df <- data.frame()
 
-ja1 <- subset(tidy_corp_cl, text == tx[1])
-ja2 <- subset(tidy_corp_cl, text == tx[2])
-ja3 <- subset(tidy_corp_cl, text == tx[3])
-ja4 <- subset(tidy_corp_cl, text == tx[4])
-ja5 <- subset(tidy_corp_cl, text == tx[5])
-ja6 <- subset(tidy_corp_cl, text == tx[6])
+# Convert to a Tibble
+tidy_aeo <- tbl_df(tidy_corp_cl)
 
 
-ja1_m <- round(mean(ja1$rel_freq[which(ja1$Theme == th[1])]), 2)
-                
-                
-                df <- rbind(df, c(y, tx[1], th[j]))
-
-sapply(ja1$rel_freq[which(ja1$Theme == th)], mean)      # not right but close  
+mean_rel_freq <- tidy_aeo %>%
+                        group_by(text, Theme) %>%
+                        summarise(mean = mean(rel_freq))
 
 
-
-
+mean_rel_freq$Author <- gsub("_.*","", mean_rel_freq$text)
 
 
 ###############################################################################
 
-
-
-ind_df <- as.data.frame(cbind(corp_wealth$Total, 
-                              corp_marriage$Total, 
-                              corp_self$Total, 
-                              corp_nation$Total))
-
-colnames(ind_df) <- c("Wealth", "Marriage", "Self", "Nation")
+# Plot the results
 
 
 
-
-
-min(ind_df$Wealth)
-max(ind_df$Marriage)
-max(ind_df$Self)
-min(ind_df$Nation)
-
-# ind_df$Wealth <- ind_df$Wealth - 2 * ind_df$Wealth
-# ind_df$Nation <- ind_df$Nation - 2 * ind_df$Nation
-
-library(ggplot2)
-
-ggplot(ind_df, aes(Wealth, Marriage, colour = Author)) +
-        geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
-        theme_minimal()
-
-ggplot(ind_df, aes(Marriage, Self, colour = Author)) +
-        geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
-        theme_minimal()
-
-ggplot(ind_df, aes(Self, Nation, colour = Author)) +
-        geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
-        theme_minimal()
-
-ggplot(ind_df, aes(Wealth, Nation, colour = Author)) +
-        geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
-        theme_minimal()
-
-ggplot(ind_df, aes(Wealth, Self, colour = Author)) +
-        geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
-        theme_minimal()
-
+# ggplot(ind_df, aes(Wealth, Marriage, colour = Author)) +
+#         geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
+#         theme_minimal()
+# 
+# ggplot(ind_df, aes(Marriage, Self, colour = Author)) +
+#         geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
+#         theme_minimal()
+# 
+# ggplot(ind_df, aes(Self, Nation, colour = Author)) +
+#         geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
+#         theme_minimal()
+# 
+# ggplot(ind_df, aes(Wealth, Nation, colour = Author)) +
+#         geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
+#         theme_minimal()
+# 
+# ggplot(ind_df, aes(Wealth, Self, colour = Author)) +
+#         geom_point(shape = 16, size = 4, show.legend = T, alpha = .4) +
+#         theme_minimal()
+# 
 
 #####
 
